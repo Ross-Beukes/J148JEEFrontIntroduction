@@ -25,5 +25,11 @@
             
             <button type="submit" name="submit" value="register">Register User</button>
         </form>
+        <%
+            String error = (String)request.getAttribute("error");
+            if(error != null){
+        %>
+        <h3><%=error%></h3>
+        <%}%>
     </body>
 </html>

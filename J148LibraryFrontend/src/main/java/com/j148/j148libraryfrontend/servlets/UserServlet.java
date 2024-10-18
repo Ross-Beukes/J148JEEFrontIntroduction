@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +23,7 @@ import java.util.Optional;
  */
 @WebServlet(name = "UserServlet", urlPatterns = {"/UserServlet"})
 public class UserServlet extends HttpServlet {
-    
+
     private static final UserRestClient USER_REST_CLIENT = new UserRestClient();
 
     /**
@@ -41,7 +43,7 @@ public class UserServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");            
+            out.println("<title>Servlet UserServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
@@ -62,7 +64,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     /**
@@ -76,25 +78,39 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String redirectPage = switch(request.getParameter("submit")){
+
+        String redirectPage = switch (request.getParameter("submit")) {
             case "register" -> {
                 //todo : implement the rest client and send the request to the backend.
                 //build user 
-                User registerUser = User.builder().build();
-                
+                User registerUser = User.builder()
+                        .name(request.getParameter("name"))
+                        .surname(request.getParameter("surname"))
+                        .email(request.getParameter("email"))
+                        .password(request.getParameter("password"))
+                        .username(request.getParameter("username"))
+                        .build();
+
                 Optional<User> user = USER_REST_CLIENT.register(registerUser);
-                
-                yield "index.jsp";
+
+                try {
+                    request.getSession().setAttribute("user", user.orElseThrow());
+                    yield "index.jsp";
+                } catch (Exception e) {
+                    request.setAttribute("error", "Unable to register new user.");
+                    LOG.log(Level.WARNING, "", e);
+                }
+                yield "register.jsp";
             }
             default -> {
                 yield "not_found.html";
             }
         };
-        
+
         request.getRequestDispatcher(redirectPage).forward(request, response);
-        
+
     }
+    private static final Logger LOG = Logger.getLogger(UserServlet.class.getName());
 
     /**
      * Returns a short description of the servlet.
