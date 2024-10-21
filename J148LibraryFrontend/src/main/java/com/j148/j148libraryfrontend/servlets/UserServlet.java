@@ -102,6 +102,11 @@ public class UserServlet extends HttpServlet {
                 }
                 yield "register.jsp";
             }
+            case "promoteUserToAdmin" -> {
+                String username = request.getParameter("username");
+                Optional<User> user = USER_REST_CLIENT.getUserByUsername(username);
+                yield "adminPromotion.jsp";
+            }
             default -> {
                 yield "not_found.html";
             }
