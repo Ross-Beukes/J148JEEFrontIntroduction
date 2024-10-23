@@ -22,5 +22,5 @@ public class Fines {
     private long fineId;
     private double amount;
     private boolean paid;
-    private BookBorrowed bookBorrowed;
+    private Books_Borrowed bookBorrowed;
 }

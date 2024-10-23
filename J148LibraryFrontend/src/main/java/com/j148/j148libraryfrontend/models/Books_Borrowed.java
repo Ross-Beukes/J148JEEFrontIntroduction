@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class BookBorrowed {
+public class Books_Borrowed {
     private long bookBorrowedId;
     private Book book;
     private User user;
