@@ -52,7 +52,7 @@ public class UserRestClient {
                     }
                 }
             }
-        } catch (JsonProcessingException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(UserRestClient.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (this.client != null) {
