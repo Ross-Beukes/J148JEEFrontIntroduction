@@ -62,4 +62,62 @@ public class UserRestClient {
         }
         return Optional.empty();
     }
+
+    public Optional<User> promoteUserToAdmin(User user) {
+        try {
+            this.client = ClientBuilder.newClient();
+            this.webTarget = client.target(uri + "promoteUserToAdmin");
+            try (Response response = this.webTarget.request().post(Entity.json(writeObjectAsJson(user)))) {
+                switch (response.getStatusInfo().toEnum()) {
+                    case OK: {
+                        User promotedUser = objectMapper.readValue(response.readEntity(String.class), User.class);
+                        return Optional.of(promotedUser);
+                    }
+                    case BAD_REQUEST: {
+                        LOG.log(Level.SEVERE, "The Promotion resquest could not be processed.");
+                        break;
+                    }
+                    default:
+                        LOG.log(Level.WARNING, "The server replied with an unusual status code");
+                        break;
+                }
+            }
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(UserRestClient.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (this.client != null) {
+                this.client.close();
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        try {
+            this.client = ClientBuilder.newClient();
+            this.webTarget = client.target(uri + "getUserByUsername");
+            try (Response response = this.webTarget.request().post(Entity.json(username))) {
+                switch (response.getStatusInfo().toEnum()) {
+                    case OK: {
+                        User user = objectMapper.readValue(response.readEntity(String.class), User.class);
+                    }
+                    case BAD_REQUEST: {
+                        LOG.log(Level.SEVERE, "The username request could not be processed");
+                        break;
+                    }
+                    default: {
+                        LOG.log(Level.WARNING, "The Server replied with an unusual status code.");
+                        break;
+                    }
+                }
+            }
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(UserRestClient.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (this.client != null) {
+                this.client.close();
+            }
+        }
+        return Optional.empty();
+    }
 }
