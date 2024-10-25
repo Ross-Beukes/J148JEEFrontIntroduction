@@ -100,6 +100,7 @@ public class UserRestClient {
                 switch (response.getStatusInfo().toEnum()) {
                     case OK: {
                         User user = objectMapper.readValue(response.readEntity(String.class), User.class);
+                        return Optional.of(user);
                     }
                     case BAD_REQUEST: {
                         LOG.log(Level.SEVERE, "The username request could not be processed");

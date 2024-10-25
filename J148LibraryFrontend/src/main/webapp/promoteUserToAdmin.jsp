@@ -16,10 +16,11 @@
         <form action="UserServlet" method="POST">
             <label for="username">Username : </label>
             <input type="text" name="username" required><br>
+            
+            <button type="submit" name="Promote" value="promote">Promote User</button>
         </form>
         <%
           String error = (String) request.getAttribute("error");
-          if (error != null) {
         %>
         <h3><%=error%></h3>
     </body>
