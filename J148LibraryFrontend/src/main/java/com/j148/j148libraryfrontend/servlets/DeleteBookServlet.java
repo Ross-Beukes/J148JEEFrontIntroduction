@@ -22,31 +22,21 @@ import java.util.logging.Logger;
  */
 @WebServlet("/deletebook")
 public class DeleteBookServlet extends HttpServlet{
-    private static final Logger LOG = Logger.getLogger(DeleteBookServlet.class.getName());
+   private static final Logger LOG = Logger.getLogger(DeleteBookServlet.class.getName());
     private final BookRestClient bookRestClient = new BookRestClient();
-    
-   @Override
-   protected void doPost(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-   String iSBN = request.getParameter("isbn");
-   
-   
-   //This is the Book Object that will be passed to the BookRestClient
-   Book bookToDelete= new Book();
-   bookToDelete.setIsbn(iSBN);
-   
-   boolean deleted = bookRestClient.deleteByIsbn(bookToDelete);
-   
-   String message; 
-   if(deleted ){
-   message= "Book was SuccessFully deleted ";
-   }else {
-   message= "Failed to complete the Process of deleting the book";
-   }
-   
-   request.setAttribute("message", message);
-   
-   // Forwarding the request to the JSP page 
-  request.getRequestDispatcher("deleteBook.jsp").forward(request, response);
-  
-   }
+ @Override 
+ protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException{
+     String title = request.getParameter("title");
+     String author= request.getParameter("author");
+     String isbn= request.getParameter("isbn");
+     
+     boolean success = bookRestClient.deleteBookByQueryParams(title, isbn, author);
+     
+     if(success){
+     request.setAttribute("Book Successfully ","deleted");
+     }else{
+         request.setAttribute("failed to delete", "Book");
+ }
+     request.getRequestDispatcher("deleteBook.jsp").forward(request,response);
+}
 }

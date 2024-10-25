@@ -25,55 +25,44 @@ public class BookRestClient {
     private Client client;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger LOG =Logger.getLogger(BookRestClient.class.getName());
-    private String uri ="http://localhost:8080/J148LibraryBackend/delete/";
+    private String uri ="http://localhost:8080/J148LibraryBackend/api/book/";
     
     private String writeObjectAsJsonString(Object object)throws JsonProcessingException{
     return this.objectMapper.writeValueAsString(object);}
     
-    public boolean deleteByIsbn(Book book){
-     try{
-         this.client = ClientBuilder.newClient();
-         String iSBN = book.getIsbn();
-         this.webTarget= client.target(uri+iSBN);
-         
-         
-         try(Response response = this.webTarget.request().delete()){
-             switch (response.getStatusInfo().toEnum()) {
-                 
-                 case OK: {
-                 LOG.info("Book successfully deleted "+ iSBN);
-                 return true;
-                 
-                 }
-                 case BAD_REQUEST:{
-                 LOG.log(Level.SEVERE,"Bad request: Unable to delete book");
-                    return false;
-                    
-
-                 }
- 
-                 default:{
-                 LOG.log(Level.WARNING,"Unexpected error encounted ");
-                 return false;
-                 
-                 }
-            
-             }
-         
-         }
-         
-     }catch(Exception e){
-     LOG.log(Level.SEVERE, "Error encountered while trying to delete the book");
-     
-         
-     }finally{
-     if(this.client!=null){
-     this.client.close();
-     }
-     
-     }
-     return false;
-    } 
+   public boolean deleteBookByQueryParams(String title,String isbn, String author){
+   try{
+      this.client=ClientBuilder.newClient();
+      String deleteUri= uri+"delete?title="+title+"&isbn="+isbn+"&author"+author;
+      this.webTarget=client.target(deleteUri);
+      
+      try(Response response = this.webTarget.request().delete()){
+          switch (response.getStatusInfo().toEnum()) {
+              case OK:{
+                  LOG.info("Book successfully deleted");
+                  return true;
+              }
+              case BAD_REQUEST:{
+              LOG.info("There was a problem Encountered while deleting");
+              return false;
+              }
+              default:{
+              LOG.info("Error while interacting with Server");
+              }
+                  throw new AssertionError();
+          }
+      
+      }
+   
+   }catch(Exception e){
+   LOG.severe("Error while deleting book");
+   return false;
+   }finally{
+       if(client!=null){
+       this.client.close();}
+   }
+   
+   }
 }
      
     
